@@ -1,0 +1,172 @@
+using System;
+using System.Threading;
+/*
+
+Program Author: < Khalid Alghamdi>
+
+MSU NetID: < Enter NetID >
+
+ Assignment: < Program 2 Animal Race>
+
+Description:
+
+A RACE BETWEEN THE TORTOISE AND DA HARE.
+this was a fun excersise. I did something like this before, still it was fun to use the thread and actually see the program move infront of me.
+
+*/
+
+abstract class RaceAnimal
+{
+    protected char[] track;
+    protected char symbol;
+    public int position; // I tried making a Protected int GetPosition() to return this position and tried changing the values of position to GetPosition but it didnt work so i had to make it Public. it kept giving me a weird error.
+    protected string name;
+
+    public RaceAnimal(string name, char symbol)
+    {
+
+        this.name = name;
+        this.symbol = symbol;
+        track = new char[70];
+        for (int i = 0; i < 70; i++)
+        {
+            track[i] = '-';
+        }
+        track[0] = symbol;
+        position = 0;
+
+    }
+
+    public override string ToString()
+    {
+        return new string(track);
+    }
+
+    protected void ChangePos(int steps)
+    {
+        int newPos = position + steps;
+        if (newPos < 0)
+        {
+            newPos = 0;
+        }
+        else if (newPos > 69)
+        {
+            newPos = 69;
+        }
+        track[position] = '-';
+        position = newPos;
+        track[position] = symbol;
+    }
+
+    public abstract void Move();
+}
+
+class Hare : RaceAnimal
+{
+    public Hare() : base("Hare", 'H') { }
+
+    public override void Move()
+    {
+        Random rand = new Random();
+        int moveType = rand.Next(1, 11);
+        if (moveType <= 2)
+        {
+            // Sleep
+        }
+        else if (moveType <= 4)
+        {
+            // Big hop
+            ChangePos(9);
+        }
+        else if (moveType <= 5)
+        {
+            // Big slip
+            ChangePos(-12);
+        }
+        else if (moveType <= 8)
+        {
+            // Small hop
+            ChangePos(1);
+        }
+        else
+        {
+            // Small slip
+            ChangePos(-2);
+        }
+    }
+}
+
+class Tortoise : RaceAnimal
+{
+    public Tortoise() : base("Tortoise", 'T') { }
+
+    public override void Move()
+    {
+        Random rand = new Random();
+        int moveType = rand.Next(1, 11);
+        if (moveType <= 5)
+        {
+            // Fast plod
+            ChangePos(3);
+        }
+        else if (moveType <= 7)
+        {
+            // Slip
+            ChangePos(-6);
+        }
+        else
+        {
+            // Slow plod
+            ChangePos(1);
+        }
+    }
+}
+
+class Race
+{
+    private Hare hare;
+    private Tortoise tortoise;
+
+    public Race()
+    {
+        hare = new Hare();
+        tortoise = new Tortoise();
+    }
+
+    public void Simulate()
+    {
+
+        Console.WriteLine("3,2,1, GO!");
+        Thread.Sleep(1000); //I had went through lots of trouble fixing stuff just because i couldn't find the error. this made me realize where i made a mistake. turns out it was the out of bounds problem that's fixed in ChangePos
+        while (true)
+        {
+            Console.Clear();
+            hare.Move();
+            tortoise.Move();
+            Console.WriteLine(hare);
+            Console.WriteLine(tortoise);
+            if (hare.position >= 69)
+            {
+                Console.WriteLine("Hare wins!");
+                break;
+            }
+            else if (tortoise.position >= 69)
+            {
+                Console.WriteLine("Tortoise wins!");
+                break;
+            }
+            Thread.Sleep(1000);
+        }
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Race race = new Race();
+        race.Simulate();
+        Thread.Sleep(5000);
+    }
+}
+// this course is really making me better at Formatting Prints 
